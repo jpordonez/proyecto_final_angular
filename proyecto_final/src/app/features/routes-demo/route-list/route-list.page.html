@@ -10,10 +10,16 @@
 -->
 <p>Selecciona una practica para ver el parametro en la URL.</p>
 
-<ul>
-  @for (lesson of lessons; track lesson.id) {
-    <li>
-      <a [routerLink]="[lesson.id]">{{ lesson.title }}</a>
-    </li>
-  }
-</ul>
+<p><a routerLink="/rutas/crear">Ir a ruta hija crear</a></p>
+
+@if (lessons$ | async; as lessons) {
+  <ul>
+    @for (lesson of lessons; track lesson.id) {
+      <li>
+        <a [routerLink]="['/rutas/tasks', lesson.id]">{{ lesson.title }}</a>
+      </li>
+    }
+  </ul>
+} @else {
+  <p>Cargando practicas...</p>
+}

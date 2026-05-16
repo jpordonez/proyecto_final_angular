@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { RoutesShellPage } from './routes-shell/routes-shell.page';
 
 export const routesDemoRoutes: Routes = [
   /*
@@ -22,7 +21,8 @@ export const routesDemoRoutes: Routes = [
    */
   {
     path: '',
-    component: RoutesShellPage,
+    loadComponent: () =>
+      import('./routes-shell/routes-shell.page').then((m) => m.RoutesShellPage),
     children: [
       {
         path: '',
@@ -30,9 +30,18 @@ export const routesDemoRoutes: Routes = [
           import('./route-list/route-list.page').then((m) => m.RouteListPage),
       },
       {
-        path: ':id',
+        path: 'crear',
+        loadComponent: () =>
+          import('./route-create/route-create.page').then((m) => m.RouteCreatePage),
+      },
+      {
+        path: 'tasks/:id',
         loadComponent: () =>
           import('./route-detail/route-detail.page').then((m) => m.RouteDetailPage),
+      },
+      {
+        path: ':id',
+        redirectTo: 'tasks/:id',
       },
     ],
   },

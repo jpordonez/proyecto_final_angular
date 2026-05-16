@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { map, Observable, tap, throwError } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
 import { API_BASE_URL } from '../core/constants/api.constants';
 import {
   mapCategoryApiToView,
@@ -11,7 +11,7 @@ import {
 import { ApiResponse } from '../models/api-response.model';
 import { CategoryApi, CategoryView } from '../models/category.model';
 import { ProductApi, ProductView } from '../models/product.model';
-import { StudentApi, StudentView } from '../models/student.model';
+import { CreateStudentPayload, StudentApi, StudentView } from '../models/student.model';
 import { CreateTaskPayload, TaskApi, TaskView } from '../models/task.model';
 
 @Injectable({ providedIn: 'root' })
@@ -60,28 +60,13 @@ export class AcademicApiService {
   getProducts(): Observable<ProductView[]> {
     return this.http.get<ApiResponse<ProductApi[]>>(`${API_BASE_URL}/products`).pipe(
       tap((response) => console.log('Respuesta cruda products:', response)),
-      /*
-       * TODO estudiante:
-       * Revisa mapProductApiToView().
-       * El metodo HTTP ya funciona, pero el mapper deja campos incompletos a proposito.
-       */
       map((response) => response.data.map(mapProductApiToView)),
     );
   }
 
   getStudents(): Observable<StudentView[]> {
     return this.http.get<ApiResponse<StudentApi[]>>(`${API_BASE_URL}/students`).pipe(
-      /*
-       * TODO estudiante:
-       * Agrega tap() aqui para inspeccionar la respuesta cruda, igual que en products.
-       *
-       * Criterio de aceptacion:
-       * - Debe imprimirse en consola una sola vez por carga.
-       * - No debe modificar response.data.
-       *
-       * Pista:
-       * tap((response) => console.log('Respuesta cruda students:', response))
-       */
+      tap((response) => console.log('Respuesta cruda students:', response)),
       map((response) => response.data.map(mapStudentApiToView)),
     );
   }
@@ -89,58 +74,28 @@ export class AcademicApiService {
   getTasks(): Observable<TaskView[]> {
     return this.http.get<ApiResponse<TaskApi[]>>(`${API_BASE_URL}/tasks`).pipe(
       tap((response) => console.log('Respuesta cruda tasks:', response)),
-      /*
-       * TODO estudiante:
-       * El mapper de tasks deja dueDateLabel parcialmente resuelto.
-       * Completa esa transformacion antes de usar la fecha en una pantalla real.
-       */
       map((response) => response.data.map(mapTaskApiToView)),
     );
   }
 
   createTask(payload: CreateTaskPayload): Observable<TaskView> {
-    /*
-     * TODO estudiante:
-     * Implementar este POST.
-     *
-     * Pasos esperados:
-     * 1. Usar this.http.post<ApiResponse<TaskApi>>(`${API_BASE_URL}/tasks`, payload)
-     * 2. Encadenar .pipe(...)
-     * 3. Agregar tap((response) => console.log(response))
-     * 4. Agregar map((response) => mapTaskApiToView(response.data))
-     * 5. Conectar este metodo desde /formularios.
-     *
-     * Resultado esperado:
-     * El formulario de /formularios podra crear una tarea real en el backend.
-     *
-     * Criterio de aceptacion:
-     * - Si el backend responde 201, la pantalla debe mostrar la tarea creada
-     *   o limpiar el formulario.
-     * - Si el backend responde 400, el estudiante debe poder identificar
-     *   que payload se envio mal mirando la consola o el mensaje visual.
-     *
-     * Nota:
-     * Se usa void payload para que TypeScript no marque el parametro como no usado
-     * mientras el metodo queda como ejercicio pendiente.
-     */
-    void payload;
-    return throwError(() => new Error('TODO estudiante: implementar POST /api/tasks'));
+    return this.http.post<ApiResponse<TaskApi>>(`${API_BASE_URL}/tasks`, payload).pipe(
+      tap((response) => console.log('Respuesta createTask:', response)),
+      map((response) => mapTaskApiToView(response.data)),
+    );
   }
 
-  /*
-   * TODO estudiante:
-   * Crear metodo createStudent().
-   *
-   * Nivel: reto.
-   *
-   * Pistas:
-   * - Primero crea CreateStudentPayload en student.model.ts.
-   * - Luego usa POST /api/students.
-   * - Finalmente aplica mapStudentApiToView al response.data.
-   *
-   * Criterio de aceptacion:
-   * - El metodo debe retornar Observable<StudentView>.
-   * - El payload debe usar los nombres que espera el backend: first_name,
-   *   last_name, email y active.
-   */
+  createStudent(payload: CreateStudentPayload): Observable<StudentView> {
+    return this.http.post<ApiResponse<StudentApi>>(`${API_BASE_URL}/students`, payload).pipe(
+      tap((response) => console.log('Respuesta createStudent:', response)),
+      map((response) => mapStudentApiToView(response.data)),
+    );
+  }
+
+  getTaskById(id: number): Observable<TaskView> {
+    return this.http.get<ApiResponse<TaskApi>>(`${API_BASE_URL}/tasks/${id}`).pipe(
+      tap((response) => console.log('Respuesta task detail:', response)),
+      map((response) => mapTaskApiToView(response.data)),
+    );
+  }
 }

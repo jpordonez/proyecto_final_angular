@@ -1,5 +1,8 @@
-import { Component, computed, inject } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { TaskView } from '../../../models/task.model';
+import { AcademicApiService } from '../../../services/academic-api.service';
 
 @Component({
   selector: 'app-route-detail-page',
@@ -29,6 +32,43 @@ export class RouteDetailPage {
    * - Si el backend responde 404, se debe mostrar "No encontrado".
    */
   private readonly route = inject(ActivatedRoute);
+  private readonly api = inject(AcademicApiService);
 
-  readonly routeId = computed(() => this.route.snapshot.paramMap.get('id') ?? 'sin-id');
+  readonly loading = signal(false);
+  readonly errorMessage = signal('');
+  readonly task = signal<TaskView | null>(null);
+
+  readonly routeId = computed(() => {
+    const rawId = this.route.snapshot.paramMap.get('id') ?? '';
+    const parsedId = Number(rawId);
+    return Number.isInteger(parsedId) && parsedId > 0 ? parsedId : null;
+  });
+
+  constructor() {
+    this.loadTask();
+  }
+
+  private loadTask(): void {
+    const id = this.routeId();
+    if (!id) {
+      this.errorMessage.set('El id de la ruta no es valido.');
+      return;
+    }
+
+    this.loading.set(true);
+    this.api.getTaskById(id).subscribe({
+      next: (task) => {
+        this.task.set(task);
+        this.loading.set(false);
+      },
+      error: (error: unknown) => {
+        if (error instanceof HttpErrorResponse && error.status === 404) {
+          this.errorMessage.set('No encontrado.');
+        } else {
+          this.errorMessage.set('No se pudo cargar la tarea.');
+        }
+        this.loading.set(false);
+      },
+    });
+  }
 }

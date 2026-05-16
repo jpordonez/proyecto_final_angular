@@ -29,16 +29,9 @@ export interface StudentView {
   active: boolean;
 }
 
-/*
- * TODO estudiante:
- * Crear aqui la interfaz para enviar estudiantes al backend.
- *
- * Pista:
- * El backend espera snake_case:
- * {
- *   first_name: string;
- *   last_name: string;
- *   email: string;
- *   active: boolean;
- * }
- */
+export interface CreateStudentPayload {
+  first_name: string;
+  last_name: string;
+  email: string;
+  active: boolean;
+}

@@ -26,18 +26,8 @@ export interface TaskView {
   summary: string;
   status: TaskStatus;
   statusLabel: string;
-  /*
-   * TODO estudiante:
-   * Completar mejor el texto de prioridad en el mapper.
-   * Por ejemplo: "Alta - resolver primero".
-   */
   priorityLabel: string;
   studentLabel: string;
-  /*
-   * TODO estudiante:
-   * El mapper actual deja este campo parcialmente resuelto.
-   * Debes mostrar una fecha legible si due_date existe.
-   */
   dueDateLabel: string;
 }
 

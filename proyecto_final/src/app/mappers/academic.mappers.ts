@@ -41,32 +41,19 @@ export function mapCategoryApiToView(category: CategoryApi): CategoryView {
 }
 
 export function mapProductApiToView(product: ProductApi): ProductView {
+  const stockLabel =
+    product.stock === 0
+      ? 'Sin stock'
+      : product.stock < 5
+        ? `${product.stock} unidades - Quedan pocas unidades`
+        : `${product.stock} unidades`;
+
   return {
     id: product.id,
     name: product.name,
     priceLabel: `$${product.price.toFixed(2)}`,
-    /*
-     * TODO estudiante:
-     * Completa esta transformacion.
-     *
-     * Requisito:
-     * - Si product.stock es 0, mostrar "Sin stock".
-     * - Si product.stock es mayor a 0, mostrar "<cantidad> unidades".
-     * - Si product.stock es menor a 5, mostrar ademas una advertencia como
-     *   "Quedan pocas unidades".
-     *
-     * Ahora se deja un texto temporal para que la pantalla compile.
-     */
-    stockLabel: 'TODO: calcular stock',
-    /*
-     * TODO estudiante:
-     * Reemplaza este texto por product.category_name.
-     * Este TODO sirve para practicar remapeo snake_case -> camelCase.
-     *
-     * Criterio de aceptacion:
-     * - En la pagina Servicios HTTP ya no debe aparecer "TODO: mapear categoria".
-     */
-    categoryName: 'TODO: mapear categoria',
+    stockLabel,
+    categoryName: product.category_name,
   };
 }
 
@@ -94,18 +81,9 @@ export function mapTaskApiToView(task: TaskApi): TaskView {
     statusLabel: mapTaskStatusToLabel(task.status),
     priorityLabel: mapTaskPriorityToLabel(task.priority),
     studentLabel: task.student_name ?? 'Sin estudiante asignado',
-    /*
-     * TODO estudiante:
-     * Completa el formato de fecha.
-     *
-     * Requisito:
-     * - Si task.due_date existe, mostrar una fecha legible.
-     * - Si no existe, mostrar "Sin fecha".
-     * - El formato recomendado para Ecuador es es-EC.
-     *
-     * Ahora se deja parcialmente resuelto para que la app compile.
-     */
-    dueDateLabel: task.due_date ? 'TODO: formatear fecha' : 'Sin fecha',
+    dueDateLabel: task.due_date
+      ? new Date(task.due_date).toLocaleDateString('es-EC')
+      : 'Sin fecha',
   };
 }
 
@@ -120,19 +98,10 @@ export function mapTaskStatusToLabel(status: TaskStatus): string {
 }
 
 export function mapTaskPriorityToLabel(priority: TaskPriority): string {
-  /*
-   * TODO estudiante:
-   * Mejora estos textos para que sean mas utiles en la UI.
-   * Ejemplo: high -> "Alta - resolver primero".
-   *
-   * Criterio de aceptacion:
-   * - low, medium y high deben tener textos distintos y utiles.
-   * - No se debe cambiar el union type TaskPriority.
-   */
   const labels: Record<TaskPriority, string> = {
-    low: 'Baja',
-    medium: 'Media',
-    high: 'Alta',
+    low: 'Baja - puede esperar',
+    medium: 'Media - revisar hoy',
+    high: 'Alta - resolver primero',
   };
 
   return labels[priority];

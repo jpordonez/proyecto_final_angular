@@ -22,15 +22,6 @@ export interface ProductView {
   id: number;
   name: string;
   priceLabel: string;
-  /*
-   * TODO estudiante:
-   * Completar el calculo de stockLabel en mapProductApiToView().
-   * Resultado esperado: "15 unidades", "Sin stock" o un texto similar.
-   */
   stockLabel: string;
-  /*
-   * TODO estudiante:
-   * Completar categoryName en el mapper usando product.category_name.
-   */
   categoryName: string;
 }

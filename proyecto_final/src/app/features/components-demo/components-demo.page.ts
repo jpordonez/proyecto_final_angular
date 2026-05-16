@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { StudentView } from '../../models/student.model';
 import { StudentCardComponent } from '../../shared/components/student-card/student-card.component';
 
@@ -27,7 +27,7 @@ export class ComponentsDemoPage {
    * - El hijo solo debe emitir eventos.
    * - El padre debe decidir que hacer con la lista.
    */
-  readonly students: StudentView[] = [
+  readonly students = signal<StudentView[]>([
     {
       id: 1,
       fullName: 'Ana Mora',
@@ -39,14 +39,31 @@ export class ComponentsDemoPage {
       id: 2,
       fullName: 'Luis Vega',
       email: 'luis.vega@example.com',
-      active: true,
-      activeLabel: 'Activo',
+      active: false,
+      activeLabel: 'Inactivo',
     },
-  ];
+  ]);
 
   selectedStudent: StudentView | null = null;
+  message = '';
 
   onStudentSelected(student: StudentView): void {
+    this.message = '';
     this.selectedStudent = student;
+  }
+
+  onStudentRemoveRequested(student: StudentView): void {
+    if (student.active) {
+      this.message = 'No se puede eliminar un estudiante activo.';
+      return;
+    }
+
+    this.students.update((items) => items.filter((item) => item.id !== student.id));
+
+    if (this.selectedStudent?.id === student.id) {
+      this.selectedStudent = null;
+    }
+
+    this.message = `Estudiante eliminado: ${student.fullName}`;
   }
 }

@@ -4,6 +4,12 @@
   padding: 16px;
 }
 
+.student-card.inactive {
+  background: #f5f7fa;
+  border-color: #b7c4d6;
+  opacity: 0.8;
+}
+
 button {
   background: #113f67;
   border: 0;

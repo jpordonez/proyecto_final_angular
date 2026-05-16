@@ -1,7 +1,14 @@
 import { Component, inject, signal } from '@angular/core';
 import { LocalStorageService } from '../../core/storage/local-storage.service';
+import { TaskPriority, TaskStatus } from '../../models/task.model';
 
 const STUDENT_NAME_KEY = 'academic-student-name';
+const TASK_FILTER_KEY = 'academic-task-filter';
+
+interface TaskFilter {
+  status: TaskStatus;
+  priority: TaskPriority;
+}
 
 @Component({
   selector: 'app-local-storage-page',
@@ -32,6 +39,9 @@ export class LocalStoragePage {
   private readonly storage = inject(LocalStorageService);
 
   readonly studentName = signal(this.storage.getItem<string>(STUDENT_NAME_KEY, ''));
+  readonly savedFilter = signal<TaskFilter | null>(
+    this.storage.getItem<TaskFilter | null>(TASK_FILTER_KEY, null),
+  );
 
   updateStudentName(value: string): void {
     this.studentName.set(value);
@@ -47,15 +57,13 @@ export class LocalStoragePage {
   }
 
   savePendingFilter(): void {
-    /*
-     * TODO estudiante:
-     * Guardar un objeto como { status: 'pending', priority: 'high' }.
-     * Luego recuperarlo al cargar la pagina.
-     *
-     * Pasos sugeridos:
-     * 1. Crear una constante TASK_FILTER_KEY.
-     * 2. Usar this.storage.setItem(TASK_FILTER_KEY, filtro).
-     * 3. Crear una signal para mostrar el filtro recuperado.
-     */
+    const filter: TaskFilter = { status: 'pending', priority: 'high' };
+    this.storage.setItem(TASK_FILTER_KEY, filter);
+    this.savedFilter.set(filter);
+  }
+
+  clearFilter(): void {
+    this.storage.removeItem(TASK_FILTER_KEY);
+    this.savedFilter.set(null);
   }
 }

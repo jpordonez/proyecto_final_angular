@@ -18,10 +18,5 @@ export interface CategoryView {
   id: number;
   name: string;
   description: string;
-  /*
-   * TODO estudiante:
-   * Este campo ya esta declarado, pero revisa el mapper.
-   * Debes decidir si quieres mostrar fecha corta, fecha larga o texto relativo.
-   */
   createdAtLabel: string;
 }

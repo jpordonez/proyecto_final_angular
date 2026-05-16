@@ -22,10 +22,22 @@
   <article class="card">
     <h2>JSON de ejemplo</h2>
     <pre>{{ exampleJson | json }}</pre>
+    <button type="button" (click)="createDemoTask()">Crear tarea de prueba</button>
+
+    @if (createError()) {
+      <p class="error">{{ createError() }}</p>
+    }
+
+    @if (createdTask(); as created) {
+      <p>Tarea creada: {{ created.title }} ({{ created.statusLabel }})</p>
+    }
   </article>
 
   <h2>Categories desde API</h2>
   @if (categories$ | async; as categories) {
+    @if (categoriesError()) {
+      <p class="error">{{ categoriesError() }}</p>
+    }
     <ul>
       @for (category of categories; track category.id) {
         <li>{{ category.name }} - {{ category.description }}</li>
@@ -37,6 +49,9 @@
 
   <h2>Products desde API</h2>
   @if (products$ | async; as products) {
+    @if (productsError()) {
+      <p class="error">{{ productsError() }}</p>
+    }
     <div class="grid">
       @for (product of products; track product.id) {
         <article class="card">
@@ -44,27 +59,27 @@
           <p>{{ product.priceLabel }}</p>
           <p>{{ product.stockLabel }}</p>
           <p>{{ product.categoryName }}</p>
-          <!--
-            TODO estudiante:
-            Si ves "TODO: calcular stock" o "TODO: mapear categoria",
-            el problema NO esta en este HTML.
-            Debes resolverlo en mapProductApiToView().
-          -->
         </article>
       }
     </div>
+  } @else {
+    <p>Cargando products...</p>
   }
 
   <h2>Tasks desde API</h2>
   @if (tasks$ | async; as tasks) {
+    @if (tasksError()) {
+      <p class="error">{{ tasksError() }}</p>
+    }
     <ul>
       @for (task of tasks; track task.id) {
-        <li>{{ task.title }} - {{ task.statusLabel }} - {{ task.studentLabel }}</li>
-        <!--
-          TODO estudiante:
-          Agrega task.dueDateLabel cuando completes el mapper de fecha.
-        -->
+        <li>
+          {{ task.title }} - {{ task.statusLabel }} - {{ task.studentLabel }} -
+          {{ task.dueDateLabel }}
+        </li>
       }
     </ul>
+  } @else {
+    <p>Cargando tasks...</p>
   }
 </section>

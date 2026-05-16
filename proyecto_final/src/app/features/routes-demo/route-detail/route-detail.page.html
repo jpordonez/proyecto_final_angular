@@ -12,6 +12,26 @@
 -->
 <article class="card">
   <h2>Detalle de ruta</h2>
-  <p>Parametro recibido: {{ routeId() }}</p>
+
+  @if (routeId(); as id) {
+    <p>Parametro recibido: {{ id }}</p>
+  }
+
+  @if (loading()) {
+    <p>Cargando detalle...</p>
+  }
+
+  @if (errorMessage()) {
+    <p class="error">{{ errorMessage() }}</p>
+  }
+
+  @if (task(); as detail) {
+    <p>Titulo: {{ detail.title }}</p>
+    <p>Estado: {{ detail.statusLabel }}</p>
+    <p>Prioridad: {{ detail.priorityLabel }}</p>
+    <p>Asignado a: {{ detail.studentLabel }}</p>
+    <p>Fecha limite: {{ detail.dueDateLabel }}</p>
+  }
+
   <a routerLink="/rutas">Volver</a>
 </article>

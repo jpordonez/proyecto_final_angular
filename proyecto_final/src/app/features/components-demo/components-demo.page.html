@@ -17,13 +17,18 @@
   <h1>Componentes</h1>
 
   <div class="grid">
-    @for (student of students; track student.id) {
+    @for (student of students(); track student.id) {
       <app-student-card
         [student]="student"
         (selected)="onStudentSelected($event)"
+        (removeRequested)="onStudentRemoveRequested($event)"
       />
     }
   </div>
+
+  @if (message) {
+    <p>{{ message }}</p>
+  }
 
   @if (selectedStudent) {
     <article class="card">

@@ -29,11 +29,18 @@
     <button type="button" (click)="saveName()">Guardar nombre</button>
     <button type="button" (click)="clearName()">Limpiar</button>
     <button type="button" (click)="savePendingFilter()">Guardar filtro pendiente</button>
+    <button type="button" (click)="clearFilter()">Limpiar filtro</button>
   </div>
 
   @if (studentName()) {
     <p>Nombre actual: {{ studentName() }}</p>
   } @else {
     <p>No hay nombre guardado todavia.</p>
+  }
+
+  @if (savedFilter(); as filter) {
+    <p>Filtro guardado: estado {{ filter.status }} y prioridad {{ filter.priority }}.</p>
+  } @else {
+    <p>No hay filtro guardado.</p>
   }
 </section>

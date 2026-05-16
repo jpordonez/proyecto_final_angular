@@ -7,6 +7,8 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { CreateTaskPayload, TaskView } from '../../models/task.model';
+import { AcademicApiService } from '../../services/academic-api.service';
 import { TaskDraftStorageService } from '../../services/task-draft-storage.service';
 
 interface TaskForm {
@@ -44,18 +46,22 @@ export class FormsPage {
    * - Si el POST funciona, debe limpiar el formulario o mostrar la tarea creada.
    * - El payload debe respetar los nombres del backend: student_id y due_date.
    */
+  private readonly api = inject(AcademicApiService);
   private readonly draftStorage = inject(TaskDraftStorageService);
   private readonly draft = this.draftStorage.loadDraft();
+
+  submitError = '';
+  createdTask: TaskView | null = null;
 
   readonly taskForm = new FormGroup<TaskForm>({
     title: new FormControl(this.draft.title, {
       nonNullable: true,
-      validators: [Validators.required],
+      validators: [Validators.required, Validators.minLength(3)],
     }),
     description: new FormControl(this.draft.description, {
       nonNullable: true,
     }),
-    priority: new FormControl('medium', {
+    priority: new FormControl(this.draft.priority, {
       nonNullable: true,
       validators: [Validators.required],
     }),
@@ -82,28 +88,49 @@ export class FormsPage {
     this.draftStorage.saveDraft({
       title: this.taskForm.controls.title.value,
       description: this.taskForm.controls.description.value,
+      priority: this.taskForm.controls.priority.value,
     });
   }
 
   submit(): void {
     this.taskForm.markAllAsTouched();
+    this.submitError = '';
+    this.createdTask = null;
 
     if (this.taskForm.invalid) {
       return;
     }
 
-    /*
-     * TODO estudiante:
-     * Aqui debe construir CreateTaskPayload y llamar AcademicApiService.createTask().
-     * Por ahora solo se muestra el valor en consola para no resolver todo el ejercicio.
-     *
-     * Pasos sugeridos:
-     * 1. Leer const value = this.taskForm.getRawValue().
-     * 2. Crear un objeto CreateTaskPayload.
-     * 3. Pasar description como null si esta vacia.
-     * 4. Llamar al servicio.
-     * 5. Manejar next y error en subscribe.
-     */
-    console.log('Formulario valido:', this.taskForm.getRawValue());
+    const value = this.taskForm.getRawValue();
+    const payload: CreateTaskPayload = {
+      title: value.title.trim(),
+      description: value.description.trim() ? value.description.trim() : null,
+      status: 'pending',
+      priority: value.priority,
+      student_id: null,
+      due_date: null,
+    };
+
+    this.api.createTask(payload).subscribe({
+      next: (task) => {
+        this.createdTask = task;
+        this.taskForm.reset({
+          title: '',
+          description: '',
+          priority: 'medium',
+        });
+        this.taskForm.setControl(
+          'subtasks',
+          new FormArray<FormControl<string>>([
+            new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+          ]),
+        );
+        this.draftStorage.clearDraft();
+      },
+      error: (error: unknown) => {
+        this.submitError =
+          error instanceof Error ? error.message : 'No se pudo crear la tarea.';
+      },
+    });
   }
 }

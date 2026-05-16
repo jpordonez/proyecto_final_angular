@@ -11,21 +11,19 @@ export class StudentCardComponent {
    * Objetivo del componente:
    * Practicar comunicacion padre -> hijo con input() y hijo -> padre con output().
    *
-   * Que debe completar el estudiante:
-   * Actividad:
-   * - Agregar un segundo output para "eliminar" o "desactivar" estudiante.
-   *
    * Criterio de aceptacion:
    * - El output debe emitir StudentView.
    * - El componente hijo no debe conocer ni modificar el array del padre.
-   *
-   * Pista:
-   * readonly removeRequested = output<StudentView>();
    */
   readonly student = input.required<StudentView>();
   readonly selected = output<StudentView>();
+  readonly removeRequested = output<StudentView>();
 
   selectStudent(): void {
     this.selected.emit(this.student());
+  }
+
+  requestRemove(): void {
+    this.removeRequested.emit(this.student());
   }
 }

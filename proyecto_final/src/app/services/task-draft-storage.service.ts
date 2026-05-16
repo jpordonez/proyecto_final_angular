@@ -4,6 +4,7 @@ import { LocalStorageService } from '../core/storage/local-storage.service';
 export interface TaskDraft {
   title: string;
   description: string;
+  priority: 'low' | 'medium' | 'high';
 }
 
 const TASK_DRAFT_KEY = 'academic-task-draft';
@@ -20,10 +21,13 @@ export class TaskDraftStorageService {
   private readonly storage = inject(LocalStorageService);
 
   loadDraft(): TaskDraft {
-    return this.storage.getItem<TaskDraft>(TASK_DRAFT_KEY, {
-      title: '',
-      description: '',
-    });
+    const rawDraft = this.storage.getItem<Partial<TaskDraft>>(TASK_DRAFT_KEY, {});
+
+    return {
+      title: rawDraft.title ?? '',
+      description: rawDraft.description ?? '',
+      priority: rawDraft.priority ?? 'medium',
+    };
   }
 
   saveDraft(draft: TaskDraft): void {

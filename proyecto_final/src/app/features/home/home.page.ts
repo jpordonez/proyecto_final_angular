@@ -7,13 +7,10 @@ import { RouterLink } from '@angular/router';
   templateUrl: './home.page.html',
 })
 export class HomePage {
-  /*
-   * Objetivo del ejercicio:
-   * Presentar el proyecto y explicar como navegar la SPA.
-   *
-   * Que debe completar el estudiante:
-   * Puede agregar una tarjeta con su nombre, curso o paralelo.
-   */
+  readonly studentName = 'Juan Pablo Ordoñez Lopez';
+  readonly course = 'Curso Angular';
+  readonly parallel = '1';
+
   readonly topics = [
     'Standalone components',
     'Zoneless change detection',

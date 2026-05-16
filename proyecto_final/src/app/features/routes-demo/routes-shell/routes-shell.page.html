@@ -10,5 +10,11 @@
 -->
 <section class="section">
   <h1>Rutas hijas y parametros</h1>
+  <div class="actions">
+    <a routerLink="/rutas" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      Lista
+    </a>
+    <a routerLink="/rutas/crear" routerLinkActive="active">Crear</a>
+  </div>
   <router-outlet />
 </section>

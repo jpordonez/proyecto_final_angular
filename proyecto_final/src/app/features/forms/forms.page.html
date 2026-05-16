@@ -30,11 +30,9 @@
       <p class="error">El titulo es obligatorio.</p>
     }
 
-    <!--
-      TODO estudiante:
-      Cuando agregues Validators.minLength(3), muestra aqui un mensaje si el titulo es muy corto.
-      Criterio de aceptacion: el mensaje debe aparecer solo si el control fue tocado.
-    -->
+    @if (taskForm.controls.title.touched && taskForm.controls.title.hasError('minlength')) {
+      <p class="error">El titulo debe tener al menos 3 caracteres.</p>
+    }
 
     <label>
       Descripcion
@@ -58,17 +56,23 @@
           <input type="text" [formControlName]="index" />
           <button type="button" (click)="removeSubtask(index)">Quitar</button>
         </div>
-        <!--
-          TODO estudiante:
-          Mostrar un mensaje de error si esta subtarea esta vacia y ya fue tocada.
-          Pista: subtask.touched && subtask.hasError('required')
-        -->
+        @if (subtask.touched && subtask.hasError('required')) {
+          <p class="error">La subtarea no puede estar vacia.</p>
+        }
       }
     </div>
 
     <button type="button" (click)="addSubtask()">Agregar subtarea</button>
     <button type="button" (click)="saveDraft()">Guardar borrador</button>
     <button type="submit">Enviar</button>
+
+    @if (submitError) {
+      <p class="error">{{ submitError }}</p>
+    }
+
+    @if (createdTask) {
+      <p>Tarea creada: {{ createdTask.title }} ({{ createdTask.statusLabel }})</p>
+    }
   </form>
 
   <article class="card">
